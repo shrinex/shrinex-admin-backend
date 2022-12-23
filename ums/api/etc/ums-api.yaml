@@ -1,0 +1,13 @@
+Name: ums-api
+Host: 0.0.0.0
+Port: 8801
+Mode: dev
+
+Log:
+  ServiceName: ums-api
+  Level: info
+
+UmsClient:
+  Endpoints:
+    - 127.0.0.1:8001
+  NonBlock: true

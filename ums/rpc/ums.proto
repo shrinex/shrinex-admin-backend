@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "./pb";
+
+message SignUpInput {
+  string Username = 1;
+  string Password = 2;
+}
+
+message SignUpOutput {
+}
+
+service ums {
+  rpc signUp(SignUpInput) returns (SignUpOutput);
+}
