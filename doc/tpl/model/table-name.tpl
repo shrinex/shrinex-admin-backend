@@ -1,4 +1,4 @@
 
-func (m *default{{.upperStartCamelObject}}Model) tableName() string {
+func (m *default{{.upperStartCamelObject}}Dao) tableName() string {
 	return m.table
 }

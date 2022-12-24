@@ -1,10 +1,10 @@
 
 type (
-	{{.lowerStartCamelObject}}Model interface{
+	{{.lowerStartCamelObject}}Dao interface{
 		{{.method}}
 	}
 
-	default{{.upperStartCamelObject}}Model struct {
+	default{{.upperStartCamelObject}}Dao struct {
 		{{if .withCache}}sqlc.CachedConn{{else}}conn sqlx.SqlConn{{end}}
 		table string
 	}

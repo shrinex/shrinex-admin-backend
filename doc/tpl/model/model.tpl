@@ -12,23 +12,23 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 {{end}}
-var _ {{.upperStartCamelObject}}Model = (*custom{{.upperStartCamelObject}}Model)(nil)
+var _ {{.upperStartCamelObject}}Dao = (*custom{{.upperStartCamelObject}}Dao)(nil)
 
 type (
-	// {{.upperStartCamelObject}}Model is an interface to be customized, add more methods here,
-	// and implement the added methods in custom{{.upperStartCamelObject}}Model.
-	{{.upperStartCamelObject}}Model interface {
-		{{.lowerStartCamelObject}}Model
+	// {{.upperStartCamelObject}}Dao is an interface to be customized, add more methods here,
+	// and implement the added methods in custom{{.upperStartCamelObject}}Dao.
+	{{.upperStartCamelObject}}Dao interface {
+		{{.lowerStartCamelObject}}Dao
 	}
 
-	custom{{.upperStartCamelObject}}Model struct {
-		*default{{.upperStartCamelObject}}Model
+	custom{{.upperStartCamelObject}}Dao struct {
+		*default{{.upperStartCamelObject}}Dao
 	}
 )
 
-// New{{.upperStartCamelObject}}Model returns a model for the database table.
-func New{{.upperStartCamelObject}}Model(conn sqlx.SqlConn{{if .withCache}}, c cache.CacheConf{{end}}) {{.upperStartCamelObject}}Model {
-	return &custom{{.upperStartCamelObject}}Model{
-		default{{.upperStartCamelObject}}Model: new{{.upperStartCamelObject}}Model(conn{{if .withCache}}, c{{end}}),
+// New{{.upperStartCamelObject}}Dao returns a Dao for the database table.
+func New{{.upperStartCamelObject}}Dao(conn sqlx.SqlConn{{if .withCache}}, c cache.CacheConf{{end}}) {{.upperStartCamelObject}}Dao {
+	return &custom{{.upperStartCamelObject}}Dao{
+		default{{.upperStartCamelObject}}Dao: new{{.upperStartCamelObject}}Dao(conn{{if .withCache}}, c{{end}}),
 	}
 }

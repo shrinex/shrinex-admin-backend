@@ -1,2 +1,7 @@
 Name: ums.rpc
 ListenOn: 0.0.0.0:8001
+Cache:
+  - Host: 47.99.74.154:6379
+    Pass: MM@113nmkl
+Database:
+  Datasource: root:MM@113nmkl@tcp(47.99.74.154:3306)/ums?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai

@@ -2,13 +2,13 @@ package session
 
 import (
 	"context"
-	"fmt"
 	"github.com/jinzhu/copier"
 	"github.com/shrinex/shrinex-admin-backend/ums-api/internal/svc"
 	"github.com/shrinex/shrinex-admin-backend/ums-api/internal/types"
 	"github.com/shrinex/shrinex-admin-backend/ums-rpc/pb"
 	"github.com/shrinex/shrinex-core-backend/errx"
 	"github.com/zeromicro/go-zero/core/logx"
+	"strings"
 )
 
 type SignUpLogic struct {
@@ -25,16 +25,42 @@ func NewSignUpLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SignUpLogi
 	}
 }
 
-func (l *SignUpLogic) SignUp(req *types.SignUpReq) (resp *types.SignUpResp, err error) {
+func (l *SignUpLogic) SignUp(req *types.SignUpReq) (*types.SignUpResp, error) {
+	err := preCheck(req)
+	if err != nil {
+		return nil, err
+	}
+
 	input := &pb.SignUpInput{}
 	_ = copier.Copy(input, req)
 
 	output, err := l.svcCtx.UmsClient.SignUp(l.ctx, input)
 	if err != nil {
-		return nil, fmt.Errorf("%w: call UmsClient#SignUp() failed, err: %v",
-			errx.New(4001, "注册失败"), err)
+		// 用户已存在
+		if errx.Is(err, 1024) {
+			return nil, err
+		}
+		// 其它错误
+		return nil, errx.Wrapf(errx.New(errx.Regular, "注册失败"), "%v", err)
 	}
 
+	resp := &types.SignUpResp{}
 	_ = copier.Copy(resp, output)
-	return
+	return resp, nil
+}
+
+func preCheck(req *types.SignUpReq) error {
+	req.Username = strings.TrimSpace(req.Username)
+	req.Password = strings.TrimSpace(req.Password)
+
+	if len(req.Username) == 0 {
+		return errx.New(errx.Validation, "用户名不能为空")
+	}
+
+	if len(req.Password) < 5 {
+		return errx.New(errx.Validation, "密码不得低于5位")
+	}
+
+	// other constraints balabala...
+	return nil
 }
