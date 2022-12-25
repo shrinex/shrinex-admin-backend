@@ -2,7 +2,7 @@ package logic
 
 import (
 	"context"
-	"errors"
+	"github.com/pkg/errors"
 	"github.com/shrinex/shrinex-admin-backend/ums-rpc/dao"
 	"github.com/shrinex/shrinex-admin-backend/ums-rpc/internal/svc"
 	"github.com/shrinex/shrinex-admin-backend/ums-rpc/pb"
@@ -32,14 +32,14 @@ func (l *SignUpLogic) SignUp(input *pb.SignUpInput) (*pb.SignUpOutput, error) {
 		return nil, errx.New(1024, "用户已存在")
 	}
 	if !errors.Is(err, dao.ErrNotFound) {
-		l.Logger.Errorf("查询用户失败: %v", err)
-		return nil, errx.New(errx.DataAccess, errx.DataAccessDesc)
+		l.Logger.Errorf("查询用户失败: %+v", errors.WithStack(err))
+		return nil, errx.NewDataAccess("查询用户失败")
 	}
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.MinCost)
 	if err != nil {
-		l.Logger.Errorf("run bcrypt failed: %v", err)
-		return nil, errx.New(errx.Regular, "加密失败")
+		l.Logger.Errorf("加密失败: %+v", errors.WithStack(err))
+		return nil, errx.NewRegular("加密失败")
 	}
 
 	user := &dao.UmsAdminUser{
@@ -48,8 +48,8 @@ func (l *SignUpLogic) SignUp(input *pb.SignUpInput) (*pb.SignUpOutput, error) {
 	}
 	_, err = l.svcCtx.AdminUserDao.Insert(l.ctx, user)
 	if err != nil {
-		l.Logger.Errorf("新增用户失败: %v", err)
-		return nil, errx.New(errx.DataAccess, errx.DataAccessDesc)
+		l.Logger.Errorf("新增用户失败: %+v", errors.WithStack(err))
+		return nil, errx.NewDataAccess("新增用户失败")
 	}
 
 	return &pb.SignUpOutput{}, nil

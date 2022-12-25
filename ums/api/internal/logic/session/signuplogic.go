@@ -3,6 +3,7 @@ package session
 import (
 	"context"
 	"github.com/jinzhu/copier"
+	"github.com/pkg/errors"
 	"github.com/shrinex/shrinex-admin-backend/ums-api/internal/svc"
 	"github.com/shrinex/shrinex-admin-backend/ums-api/internal/types"
 	"github.com/shrinex/shrinex-admin-backend/ums-rpc/pb"
@@ -38,10 +39,10 @@ func (l *SignUpLogic) SignUp(req *types.SignUpReq) (*types.SignUpResp, error) {
 	if err != nil {
 		// 用户已存在
 		if errx.Is(err, 1024) {
-			return nil, err
+			return nil, errors.WithStack(err)
 		}
 		// 其它错误
-		return nil, errx.Wrapf(errx.New(errx.Regular, "注册失败"), "%v", err)
+		return nil, errx.NewRegular("注册失败", errx.WithCause(err))
 	}
 
 	resp := &types.SignUpResp{}
@@ -54,11 +55,11 @@ func preCheck(req *types.SignUpReq) error {
 	req.Password = strings.TrimSpace(req.Password)
 
 	if len(req.Username) == 0 {
-		return errx.New(errx.Validation, "用户名不能为空")
+		return errx.NewValidation("用户名不能为空")
 	}
 
 	if len(req.Password) < 5 {
-		return errx.New(errx.Validation, "密码不得低于5位")
+		return errx.NewValidation("密码不得低于5位")
 	}
 
 	// other constraints balabala...

@@ -5,6 +5,7 @@ Mode: dev
 
 Log:
   ServiceName: ums-api
+  Encoding: plain
   Level: info
 
 UmsClient:
